@@ -2,8 +2,11 @@ package com.projedata;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 public class Principal {
@@ -11,6 +14,7 @@ public class Principal {
     List<Funcionario> funcionarios = new ArrayList<>();
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
+    // 3.1
     funcionarios
         .add(new Funcionario("Maria", LocalDate.parse("18/10/2000", formatter), new BigDecimal("2009.44"), "Operador"));
     funcionarios
@@ -31,5 +35,87 @@ public class Principal {
         new Funcionario("Heloísa", LocalDate.parse("24/05/2003", formatter), new BigDecimal("1606.85"), "Eletricista"));
     funcionarios
         .add(new Funcionario("Helena", LocalDate.parse("02/09/1996", formatter), new BigDecimal("2799.93"), "Gerente"));
+
+    System.out.println("-------------------");
+
+    // 3.2
+    funcionarios = funcionarios.stream()
+        .filter(f -> !f.getNome().equals("João"))
+        .toList();
+
+    System.out.println("-------------------");
+
+    // 3.3
+    funcionarios.forEach(System.out::println);
+
+    // 3.4
+    funcionarios.forEach(f -> f.setSalario(f.getSalario().multiply(new BigDecimal("1.1"))));
+
+    System.out.println("-------------------");
+
+    // 3.5
+    var funcoesAgrupadas = new HashMap<String, List<Funcionario>>();
+
+    funcionarios.stream()
+        .map(Funcionario::getFuncao)
+        .distinct()
+        .forEach(f -> funcoesAgrupadas.put(f, new ArrayList<>()));
+
+    funcionarios.forEach(f -> {
+      funcoesAgrupadas.get(f.getFuncao()).add(f);
+    });
+
+    System.out.println("-------------------");
+
+    // 3.6
+    funcoesAgrupadas.forEach((funcao, funcionariosAgrupados) -> {
+      var funcionariosFormatados = String.join(",", funcionariosAgrupados.stream().map(Funcionario::toString).toList());
+      System.out.println("Função: " + funcao + " => " + funcionariosFormatados);
+    });
+
+    System.out.println("-------------------");
+
+    // 3.8
+    funcionarios.stream()
+        .filter(f -> f.getDataNascimento().getMonth().equals(Month.OCTOBER)
+            || f.getDataNascimento().getMonth().equals(Month.DECEMBER))
+        .forEach(System.out::println);
+
+    System.out.println("-------------------");
+
+    // 3.9
+    funcionarios.stream()
+        .sorted(Comparator.comparing(Funcionario::getDataNascimento))
+        .findFirst()
+        .ifPresent(System.out::println);
+
+    System.out.println("-------------------");
+
+    // 3.10
+    funcionarios.stream()
+        .sorted(Comparator.comparing(Funcionario::getNome))
+        .forEach(System.out::println);
+
+    System.out.println("-------------------");
+
+    // 3.11
+    funcionarios.stream()
+        .map(Funcionario::getSalario)
+        .reduce(BigDecimal::add)
+        .ifPresent(total -> System.out.println("Total dos salários: R$ " + Formatter.format(total.doubleValue())));
+
+    System.out.println("-------------------");
+
+    // 3.12
+    var salarioMinimo = Double.valueOf("1212.00");
+    record FuncionarioComSalarioMinimo(Funcionario funcionario, Double salarios) {
+    }
+    funcionarios.stream()
+        .map(f -> new FuncionarioComSalarioMinimo(f, f.getSalario().doubleValue() / salarioMinimo))
+        .forEach(
+            fsm -> System.out.println(
+                fsm.funcionario.getNome() + " possui " + String.format("%.2f", fsm.salarios) + " salários mínimos."));
+
+    System.out.println("-------------------");
   }
 }

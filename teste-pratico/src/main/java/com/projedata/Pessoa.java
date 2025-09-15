@@ -2,20 +2,34 @@ package com.projedata;
 
 import java.time.LocalDate;
 
-import lombok.Getter;
-import lombok.Setter;
-
 public class Pessoa {
-  @Getter
-  @Setter
-  private String name;
 
-  @Getter
-  @Setter
+  private String nome;
+
   private LocalDate dataNascimento;
 
   public Pessoa(String name, LocalDate dataNascimento) {
-    this.name = name;
+    this.nome = name;
+    this.dataNascimento = dataNascimento;
+  }
+
+  public String getNome() {
+    return nome;
+  }
+
+  public void setNome(String name) {
+    this.nome = name;
+  }
+
+  public LocalDate getDataNascimento() {
+    return dataNascimento;
+  }
+
+  public String getDataNascimentoFormatado() {
+    return Formatter.format(dataNascimento);
+  }
+
+  public void setDataNascimento(LocalDate dataNascimento) {
     this.dataNascimento = dataNascimento;
   }
 }
